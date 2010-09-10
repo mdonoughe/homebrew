@@ -24,20 +24,11 @@ class Tclcl <Formula
 +V_LIB_TCL="/System/Library/Frameworks/Tcl.framework/Versions/8.4/Tcl"
 +V_LIBS="$V_LIB_TCL $V_LIBS"
 +V_DEFINES="-DHAVE_LIB_TCL $V_DEFINES"
-+V_LIBRARY_TCL="/System/Library/Tcl/8.4"
++V_LIBRARY_TCL="/System/Library/Frameworks/Tcl.framework/Versions/8.4/Resources/Scripts"
 +#NS_CHECK_ANY_PATH(init.tcl,$TCL_TCL_PLACES,$d,$TCL_TCL_PLACES_D,V_LIBRARY_TCL,tcl)
  
  dnl find the pesky http library
  tcl_http_library_dir=/dev/null
-@@ -202,7 +206,7 @@
- 	$V_LIBRARY_TCL/http2.1 \\
- 	$V_LIBRARY_TCL/http2.0 \\
- 	$V_LIBRARY_TCL/http1.0 \\
--	"
-+	#{Dir.glob('/System/Library/Tcl/tclsoap*').first}"
- NS_CHECK_ANY_PATH(http.tcl,$tcl_http_places,"","",tcl_http_library_dir,tcl)
- AC_MSG_CHECKING(Tcl http.tcl library)
- if test -f $tcl_http_library_dir/http.tcl
 diff -Naur tclcl-1.19/conf/configure.in.tk tclcl-1.19/conf/configure.in.tk
 --- tclcl-1.19/conf/configure.in.tk	2007-02-18 22:16:52.000000000 +0000
 +++ tclcl-1.19/conf/configure.in.tk	2010-09-08 01:39:20.000000000 +0000
@@ -84,25 +75,7 @@ diff -Naur tclcl-1.19/conf/configure.in.x11 tclcl-1.19/conf/configure.in.x11
 +V_LIB_X11=-l/usr/X11/lib -lX11
  
  if test -n "$V_SHM" ; then
- 	if test -z "$x_libraries" ; then
-diff -Naur tclcl-1.19/Makefile.in tclcl-1.19/Makefile.in
---- tclcl-1.19/Makefile.in	2007-03-10 23:18:00.000000000 +0000
-+++ tclcl-1.19/Makefile.in	2010-09-08 03:15:23.000000000 +0000
-@@ -88,12 +88,8 @@
- LIBRARY_TCL = @V_LIBRARY_TCL@
- 
- 
--TCL_76_LIBRARY_FILES = \\
--	$(LIBRARY_TCL)/init.tcl
--TCL_BASE_LIBRARY_FILES= \\
--	$(LIBRARY_TCL)/init.tcl \\
--	$(LIBRARY_TCL)/history.tcl \\
--	$(LIBRARY_TCL)/word.tcl
-+TCL_76_LIBRARY_FILES = 
-+TCL_BASE_LIBRARY_FILES= 
- TCL_80_LIBRARY_FILES = \\
- 	$(TCL_BASE_LIBRARY_FILES) \\
- 	$(LIBRARY_TCL)/http2.0/http.tcl}
+ 	if test -z "$x_libraries" ; then}
     end
     ENV['CC'] = 'cc -arch i386'
     ENV['CXX'] = 'c++ -arch i386'
@@ -115,6 +88,6 @@ diff -Naur tclcl-1.19/Makefile.in tclcl-1.19/Makefile.in
     Dir.mkdir("#{prefix}/include")
     Dir.mkdir("#{prefix}/lib")
     system 'make install'
-    mv "#{prefix}/bin", bin unless "#{prefix}/bin" == bin
+    mv "#{prefix}/bin", "#{bin}" unless "#{prefix}/bin" == "#{bin}"
   end
 end
