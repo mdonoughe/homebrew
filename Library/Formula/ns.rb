@@ -46,20 +46,11 @@ diff -Naur ns-2.34/conf/configure.in.tcl ns-2.34/conf/configure.in.tcl
 +V_LIB_TCL="/System/Library/Frameworks/Tcl.framework/Versions/8.4/Tcl"
 +V_LIBS="$V_LIB_TCL $V_LIBS"
 +V_DEFINES="-DHAVE_LIB_TCL $V_DEFINES"
-+V_LIBRARY_TCL="/System/Library/Tcl/8.4"
++V_LIBRARY_TCL="/System/Library/Frameworks/Tcl.framework/Versions/8.4/Resources/Scripts"
 +#NS_CHECK_ANY_PATH(init.tcl,$TCL_TCL_PLACES,$d,$TCL_TCL_PLACES_D,V_LIBRARY_TCL,tcl)
  
  dnl find the pesky http library
  tcl_http_library_dir=/dev/null
-@@ -216,7 +220,7 @@
- 	$V_LIBRARY_TCL/http2.1 \\
- 	$V_LIBRARY_TCL/http2.0 \\
- 	$V_LIBRARY_TCL/http1.0 \\
--	"
-+	#{Dir.glob('/System/Library/Tcl/tclsoap*').first}"
- NS_CHECK_ANY_PATH(http.tcl,$tcl_http_places,"","",tcl_http_library_dir,tcl)
- AC_MSG_CHECKING(Tcl http.tcl library)
- if test -f $tcl_http_library_dir/http.tcl
 diff -Naur ns-2.34/conf/configure.in.tk ns-2.34/conf/configure.in.tk
 --- ns-2.34/conf/configure.in.tk	2009-06-14 17:35:45.000000000 +0000
 +++ ns-2.34/conf/configure.in.tk	2010-09-08 14:20:13.000000000 +0000
@@ -131,7 +122,7 @@ diff -Naur ns-2.34/conf/configure.in.x11 ns-2.34/conf/configure.in.x11
     Dir.mkdir "#{prefix}/share"
     system 'make install'
     # ns does not honor --mandir
-    mv "#{prefix}/man", man unless "#{prefix}/man" == man
-    mv "#{prefix}/bin", bin unless "#{prefix}/bin" == bin
+    mv "#{prefix}/man", "#{man}" unless "#{prefix}/man" == "#{man}"
+    mv "#{prefix}/bin", "#{bin}" unless "#{prefix}/bin" == "#{bin}"
   end
 end
