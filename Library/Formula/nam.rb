@@ -10,7 +10,19 @@ class Nam <Formula
   def install
     require 'fileutils'
     IO.popen('patch -p1', 'w') do |p|
-      p.puts %{diff -Naur nam-1.14/conf/configure.in.dynamic nam-1.14/conf/configure.in.dynamic
+      p.puts %{diff -Naur nam-1.14/bbox.h nam-1.14/bbox.h
+--- nam-1.14/bbox.h	2009-06-18 00:11:06.000000000 +0000
++++ nam-1.14/bbox.h	2010-09-08 18:12:51.000000000 +0000
+@@ -36,7 +36,7 @@
+ #ifndef nam_bbox_h
+ #define nam_bbox_h
+ 
+-#include <X11/Xlib.h>
++#include <Tk.h>
+ #include <float.h>
+ 
+ struct BBox \{
+diff -Naur nam-1.14/conf/configure.in.dynamic nam-1.14/conf/configure.in.dynamic
 --- nam-1.14/conf/configure.in.dynamic	2009-06-18 00:11:06.000000000 +0000
 +++ nam-1.14/conf/configure.in.dynamic	2010-09-08 16:12:01.000000000 +0000
 @@ -95,8 +95,13 @@
@@ -18,20 +30,20 @@ class Nam <Formula
  	DL_LD_SEARCH_FLAGS=""
  	;;
 -    Darwin-5.*|Darwin-6.*|Darwin-7.*|Darwin-8.*)
--	LDFLAGS="${LDFLAGS} -Wl,-bind_at_load"	
+-	LDFLAGS="$\{LDFLAGS\} -Wl,-bind_at_load"	
 +    Darwin-*)
 +        SHLIB_CFLAGS="-fno-common -fPIC -pipe"
 +        SHLIB_LD="cc -arch i386 -install_name /usr/local/lib/libns.dylib -dynamiclib -flat_namespace -undefined suppress"
 +        SHLIB_SUFFIX=".dylib"
 +        DL_LIBS=""
 +	SHLD_FLAGS="-Wl,-bind_at_load -Wl,-multiply_defined -Wl,suppress"
-+	LDFLAGS="${LDFLAGS} -arch i386 -Wl,-bind_at_load"
++	LDFLAGS="$\{LDFLAGS\} -arch i386 -Wl,-bind_at_load"
  	;;
      dgux*)
  	SHLIB_CFLAGS="-K PIC"
 diff -Naur nam-1.14/conf/configure.in.tcl nam-1.14/conf/configure.in.tcl
 --- nam-1.14/conf/configure.in.tcl	2009-06-18 00:11:06.000000000 +0000
-+++ nam-1.14/conf/configure.in.tcl	2010-09-08 16:08:04.000000000 +0000
++++ nam-1.14/conf/configure.in.tcl	2010-09-10 17:24:28.000000000 +0000
 @@ -201,10 +201,13 @@
  
  
@@ -52,7 +64,7 @@ diff -Naur nam-1.14/conf/configure.in.tcl nam-1.14/conf/configure.in.tcl
  tcl_http_library_dir=/dev/null
 diff -Naur nam-1.14/conf/configure.in.tk nam-1.14/conf/configure.in.tk
 --- nam-1.14/conf/configure.in.tk	2009-06-18 00:11:06.000000000 +0000
-+++ nam-1.14/conf/configure.in.tk	2010-09-08 16:09:53.000000000 +0000
++++ nam-1.14/conf/configure.in.tk	2010-09-10 17:25:37.000000000 +0000
 @@ -39,6 +39,7 @@
                  $d/lib \\
                  $d/library"
@@ -67,9 +79,9 @@ diff -Naur nam-1.14/conf/configure.in.tk nam-1.14/conf/configure.in.tk
  NS_BEGIN_PACKAGE(tk)
 -NS_CHECK_HEADER_PATH(tk.h,$TK_H_PLACES,$d,$TK_H_PLACES_D,V_INCLUDE_TK,tk)
 -NS_CHECK_LIB_PATH(tk$TK_HI_VERS,$TK_LIB_PLACES,$d,$TK_LIB_PLACES_D,V_LIB_TK,tk)
-+V_INCLUDE_TK="-DMAC_OSX_TK -I/usr/X11/include -I/System/Library/Frameworks/Tk.framework/Versions/8.4/Headers -I/System/Library/Frameworks/Tcl.framework/Versions/8.4/PrivateHeaders -I/System/Library/Frameworks/Tcl.framework/Versions/8.4/Headers"
++V_INCLUDE_TK="-I/System/Library/Frameworks/Tk.framework/Versions/8.4/Headers -I/System/Library/Frameworks/Tcl.framework/Versions/8.4/PrivateHeaders -I/System/Library/Frameworks/Tcl.framework/Versions/8.4/Headers"
 +V_INCLUDES="$V_INCLUDE_TK $V_INCLUDES"
-+V_DEFINES="-DHAVE_TK_H $V_DEFINES"
++V_DEFINES="-DMAC_OSX_TK -DHAVE_TK_H $V_DEFINES"
 +V_LIB_TK="/System/Library/Frameworks/Tk.framework/Versions/8.4/Tk"
 +V_LIBS="$V_LIB_TK $V_LIBS"
 +V_DEFINES="-DHAVE_LIB_TK $V_DEFINES"
@@ -109,18 +121,6 @@ diff -Naur nam-1.14/conf/configure.in.x11 nam-1.14/conf/configure.in.x11
  			V_Xext="-lXext"
  		else
  			echo "warning: compiling without -lXext"
-diff -Naur nam-1.14/tkUnixInit.c nam-1.14/tkUnixInit.c
---- nam-1.14/tkUnixInit.c	2009-06-18 00:11:06.000000000 +0000
-+++ nam-1.14/tkUnixInit.c	2010-09-08 17:34:29.000000000 +0000
-@@ -13,7 +13,7 @@
- TkpInit(Tcl_Interp *interp)
- #endif
- \{
--#ifndef WIN32
-+#if 0
- 	\{
- 		extern void TkCreateXEventSource(void);
- 		TkCreateXEventSource();
 diff -Naur nam-1.14/main.cc nam-1.14/main.cc
 --- nam-1.14/main.cc	2009-06-18 00:11:06.000000000 +0000
 +++ nam-1.14/main.cc	2010-09-10 17:34:07.000000000 +0000
@@ -132,7 +132,72 @@ diff -Naur nam-1.14/main.cc nam-1.14/main.cc
 +#if 1
  	if (Tcl_Init(interp) == TCL_ERROR) \{
  		printf("%s\\n", interp->result);
- 		abort();}
+ 		abort();
+@@ -341,8 +341,8 @@
+         Tcl_SetVar(interp, "tcl_library", "./lib/tcl7.6", TCL_GLOBAL_ONLY);
+         Tcl_SetVar(interp, "tk_library", "./lib/tk4.2", TCL_GLOBAL_ONLY);
+ #else
+-        Tcl_SetVar(interp, "tcl_library", "", TCL_GLOBAL_ONLY);
+-        Tcl_SetVar(interp, "tk_library", "", TCL_GLOBAL_ONLY);
++        //Tcl_SetVar(interp, "tcl_library", "/System/Library/Frameworks/Tcl.framework/Versions/8.4/Resources/Scripts", TCL_GLOBAL_ONLY);
++        //Tcl_SetVar(interp, "tk_library", "/System/Library/Frameworks/Tk.framework/Versions/8.4/Resources/Scripts", TCL_GLOBAL_ONLY);
+                                                                                 
+         // this seems just a hack, should NOT have hard-coded library path!
+         // why there's no problem with old  TCL/TK?
+@@ -501,7 +501,7 @@
+ 			strcat(args, "z 1 ");
+ 			break;
+ 
+-#ifndef WIN32
++#if 0
+ 		case 'S':
+ 			XSynchronize(Tk_Display(tk), True);
+ 			break;
+diff -Naur nam-1.14/tcl/test/test-template nam-1.14/tcl/test/test-template
+--- nam-1.14/tcl/test/test-template	2009-06-18 00:11:06.000000000 +0000
++++ nam-1.14/tcl/test/test-template	2010-09-08 18:25:10.000000000 +0000
+@@ -98,7 +98,7 @@
+ fi
+ 
+ # sucess can be true, false, or unknown
+-if "$success" = true; then
++if [ "$success" = true ]; then
+ 		echo test output agrees with reference output.
+ 		exit 0
+ else
+diff -Naur nam-1.14/tkUnixInit.c nam-1.14/tkUnixInit.c
+--- nam-1.14/tkUnixInit.c	2009-06-18 00:11:06.000000000 +0000
++++ nam-1.14/tkUnixInit.c	2010-09-08 18:14:21.000000000 +0000
+@@ -13,7 +13,7 @@
+ TkpInit(Tcl_Interp *interp)
+ #endif
+ \{
+-#ifndef WIN32
++#if 0
+ 	\{
+ 		extern void TkCreateXEventSource(void);
+ 		TkCreateXEventSource();
+diff -Naur nam-1.14/view.cc nam-1.14/view.cc
+--- nam-1.14/view.cc	2009-06-18 00:11:06.000000000 +0000
++++ nam-1.14/view.cc	2010-09-10 17:58:53.000000000 +0000
+@@ -319,7 +319,7 @@
+ 	clip_.xmax = (float)width_;
+ 	clip_.ymax = (float)height_;
+ 	b.xrect(rect);
+-#ifndef WIN32
++#if 0
+ 	for (int i = 0; i < paint->num_gc(); i++) \{
+ 		XSetClipRectangles(Tk_Display(tk_), paint->paint_to_gc(i),
+ 				   0, 0, &rect, 1, Unsorted);
+@@ -330,7 +330,7 @@
+ void View::clearClipRect()
+ \{
+ 	Paint* paint = Paint::instance();
+-#ifndef WIN32
++#if 0
+ 	for (int i = 0; i < paint->num_gc(); i++) \{
+ 		// XXX Or should I set it to the whole window???
+ 		XSetClipRectangles(Tk_Display(tk_), paint->paint_to_gc(i),}
     end
     ENV['CC'] = 'cc -arch i386'
     ENV['CXX'] = 'c++ -arch i386'
