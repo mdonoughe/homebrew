@@ -24,20 +24,11 @@ class Otcl <Formula
 +V_LIB_TCL="/System/Library/Frameworks/Tcl.framework/Versions/8.4/Tcl"
 +V_LIBS="$V_LIB_TCL $V_LIBS"
 +V_DEFINES="-DHAVE_LIB_TCL $V_DEFINES"
-+V_LIBRARY_TCL="/System/Library/Tcl/8.4"
++V_LIBRARY_TCL="/System/Library/Frameworks/Tcl.framework/Versions/8.4/Resources/Scripts"
 +#NS_CHECK_ANY_PATH(init.tcl,$TCL_TCL_PLACES,$d,$TCL_TCL_PLACES_D,V_LIBRARY_TCL,tcl)
  
  dnl find the pesky http library
  tcl_http_library_dir=/dev/null
-@@ -202,7 +206,7 @@
- 	$V_LIBRARY_TCL/http2.1 \\
- 	$V_LIBRARY_TCL/http2.0 \\
- 	$V_LIBRARY_TCL/http1.0 \\
--	"
-+	#{Dir.glob('/System/Library/Tcl/tclsoap*').first}"
- NS_CHECK_ANY_PATH(http.tcl,$tcl_http_places,"","",tcl_http_library_dir,tcl)
- AC_MSG_CHECKING(Tcl http.tcl library)
- if test -f $tcl_http_library_dir/http.tcl
 diff -Naur otcl-1.13/conf/configure.in.tk otcl-1.13/conf/configure.in.tk
 --- otcl-1.13/conf/configure.in.tk	2007-02-18 22:16:52.000000000 +0000
 +++ otcl-1.13/conf/configure.in.tk	2010-09-08 01:39:20.000000000 +0000
@@ -124,6 +115,6 @@ diff -Naur otcl-1.13/configure.in otcl-1.13/configure.in
     Dir.mkdir "#{prefix}/include"
     Dir.mkdir "#{prefix}/lib"
     system 'make install'
-    mv "#{prefix}/bin", bin unless "#{prefix}/bin" == bin
+    mv("#{prefix}/bin", "#{bin}") unless "#{prefix}/bin" == "#{bin}"
   end
 end
